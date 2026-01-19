@@ -1,0 +1,30 @@
+# Ignore agent caches, logs, auth, and machine-specific artifacts
+/.DS_Store
+/Thumbs.db
+
+# Codex sensitive or noisy files
+/codex/auth.json
+/codex/history.jsonl
+/codex/sessions/
+/codex/tmp/
+/codex/log/
+
+# Claude sensitive or noisy files
+/claude/.credentials.json
+/claude/history.jsonl
+/claude/shell-snapshots/
+/claude/debug/
+/claude/downloads/
+/claude/statsig/
+/claude/todos/
+/claude/projects/
+/claude/plans/
+/claude/ide/
+
+# Gemini sensitive or noisy files
+/gemini/
+
+# Node / Python caches
+**/node_modules/
+**/__pycache__/
+**/*.pyc

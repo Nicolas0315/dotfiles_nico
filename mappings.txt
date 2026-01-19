@@ -1,0 +1,7 @@
+AGENTS.md:~/.codex/AGENTS.md
+AGENTS.md:~/.claude/CLAUDE.md
+AGENTS.md:~/.gemini/GEMINI.md
+codex/config.toml:~/.codex/config.toml
+codex/rules:~/.codex/rules
+codex/skills/agent-dotfiles:~/.codex/skills/agent-dotfiles
+codex/skills/ralph-loop:~/.codex/skills/ralph-loop

@@ -1,0 +1,6 @@
+model = "gpt-5.2-codex"
+model_reasoning_effort = "xhigh"
+notify = ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "C:\\Users\\ogosh\\.codex\\notify.ps1"]
+
+[notice]
+hide_full_access_warning = true
