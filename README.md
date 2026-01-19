@@ -31,6 +31,19 @@ chmod +x scripts/link_dotfiles.sh
 ./scripts/link_dotfiles.sh --root "$HOME/dotfiles" --map "$HOME/dotfiles/mappings.txt"
 ```
 
+4) Sync AGENTS.md into projects (Windows):
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\sync_projects.ps1 `
+  -DotfilesRoot "$env:USERPROFILE\dotfiles" `
+  -ProjectsFile "$env:USERPROFILE\dotfiles\projects.txt"
+```
+
+5) Sync AGENTS.md into projects (macOS/Linux):
+```bash
+chmod +x scripts/sync_projects.sh
+./scripts/sync_projects.sh --root "$HOME/dotfiles" --projects "$HOME/dotfiles/projects.txt"
+```
+
 ## Notes
 
 - Avoid linking secrets (auth.json, tokens, history, cache).

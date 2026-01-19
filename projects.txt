@@ -1,0 +1,9 @@
+# One project path per line.
+# Lines starting with # are ignored.
+
+C:\Users\ogosh\Desktop\eiai\video-analysis
+C:\Users\ogosh\Desktop\dtm-gemini
+C:\Users\ogosh\Desktop\ugc-ai
+C:\Users\ogosh\Desktop\new-browse
+C:\Users\ogosh\Desktop\aituber\airi
+C:\Users\ogosh\Desktop\aituber\airi\packages\model-driver-mediapipe
