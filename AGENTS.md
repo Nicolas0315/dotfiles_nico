@@ -1,6 +1,6 @@
 # AGENTS.md
 
-このファイルは、NEXI / EIAI 動画分析・インフルエンサーマッチング基盤でAIエージェントが効果的に作業するためのガイドラインです。
+このファイルは、New Browse プロジェクトでAIエージェントが効果的に作業するためのガイドラインです。
 
 # Agent Instructions
 
@@ -9,531 +9,462 @@
 - 不明点がある場合も日本語で質問すること
 - UI/ドキュメント/ユーザー向けメッセージは日本語で記述すること
 
-## 📦 Agent Skills
+---
 
-このプロジェクトは [Agent Skills](https://agentskills.io) オープンスタンダードに対応しています。
+## 📚 リファレンスリソース
 
-### 利用可能なスキル
+このプロジェクトには `C:\Users\ogosh\Desktop\eiai\_refs\everything-claude-code` に、Claude Code のベストプラクティス集が配置されています。
 
-| スキル | 説明 | パス |
-|--------|------|------|
-| **video-analysis** | AI動画分析 | `.skills/video-analysis/SKILL.md` |
-| **api-development** | FastAPIバックエンド開発 | `.skills/api-development/SKILL.md` |
-| **ctr-optimization** | CTR最適化分析 | `.skills/ctr-optimization/SKILL.md` |
-| **project-manager** | プロジェクト整理/優先順位付け | `.skills/project-manager/SKILL.md` |
-| **agent-browser** | ブラウザ自動化 | `.skills/agent-browser/SKILL.md` |
-| **vibium** | ブラウザ自動化（MCP統合） | `.skills/vibium/SKILL.md` |
+### リファレンスの構成
 
-詳細は `.skills/README.md` を参照してください。
+```bash
+_refs/everything-claude-code/
+├── agents/           # サブエージェント定義（planner, architect, code-reviewer等）
+├── skills/           # ワークフロー定義とドメイン知識
+├── commands/         # スラッシュコマンド（/tdd, /plan, /code-review等）
+├── rules/            # 常に従うべきガイドライン
+├── hooks/            # トリガーベースの自動化
+├── mcp-configs/      # MCPサーバー設定
+└── examples/         # 設定例
+```
+
+### 活用方法
+
+#### 1. サブエージェントの参照
+
+複雑なタスクを実行する際は、`_refs/everything-claude-code/agents/` 内のエージェント定義を参照してください：
+
+- **planner.md** - 機能実装の計画立案
+- **architect.md** - システム設計の意思決定
+- **code-reviewer.md** - コード品質とセキュリティレビュー
+- **tdd-guide.md** - テスト駆動開発
+- **security-reviewer.md** - 脆弱性分析
+- **build-error-resolver.md** - ビルドエラーの修正
+- **e2e-runner.md** - E2Eテスト
+- **refactor-cleaner.md** - デッドコードのクリーンアップ
+- **doc-updater.md** - ドキュメント同期
+
+#### 2. スキルの参照
+
+ワークフロー定義やベストプラクティスは `_refs/everything-claude-code/skills/` を参照：
+
+- **coding-standards.md** - 言語別ベストプラクティス
+- **frontend-patterns.md** - React、TypeScriptパターン
+- **tdd-workflow/** - TDD方法論
+- **security-review/** - セキュリティチェックリスト
+
+#### 3. ルールの参照
+
+常に従うべきガイドラインは `_refs/everything-claude-code/rules/` を参照：
+
+- **security.md** - セキュリティチェック（必須）
+- **coding-style.md** - イミュータビリティ、ファイル構成
+- **testing.md** - TDD、80%カバレッジ要件
+- **git-workflow.md** - コミットフォーマット、PRプロセス
+- **agents.md** - サブエージェントへの委譲タイミング
+- **performance.md** - モデル選択、コンテキスト管理
+
+#### 4. 使用例
+
+```markdown
+# 複雑な機能実装時
+1. `_refs/everything-claude-code/agents/planner.md` を参照して実装計画を立案
+2. `_refs/everything-claude-code/skills/tdd-workflow/` に従ってテスト駆動開発
+3. `_refs/everything-claude-code/agents/code-reviewer.md` でコードレビュー
+4. `_refs/everything-claude-code/agents/security-reviewer.md` でセキュリティチェック
+```
+
+### 重要な注意事項
+
+**コンテキストウィンドウ管理**:
+
+- すべてのMCPを同時に有効化しないこと
+- 200kコンテキストウィンドウが70kまで縮小する可能性があります
+- 推奨設定:
+  - 20-30個のMCPを設定
+  - プロジェクトごとに10個未満を有効化
+  - アクティブなツールは80個未満
 
 ---
 
 ## 🧭 重要ドキュメント
 
-- `README.md` - プロジェクト概要 / 主要コンポーネント
-- `docs/README.md` - ドキュメント索引
-- `docs/project/ARCHITECTURE.md` - 現行アーキテクチャ
-- `docs/project/ARCHITECTURE_REDESIGN.md` - FastAPI + htmx 再設計
-- `docs/project/REFACTORING_PROGRESS.md` - リファクタ進捗
-- `docs/api/API_REFERENCE.md` - APIリファレンス
-- `docs/testing/README.md` - テスト手順
-- `docs/development/COMMIT_POLICY.md` - コミット規約
-- `docs/project/GIT_WORKFLOW.md` - ブランチ/PR運用
-- `docs/operations/MCP_GUIDE.md` - MCPガイド
-- `docs/operations/MCP_SETUP.md` - MCPセットアップ
-- `docs/planning/TODO.md` - 優先タスク
-- `docs/issues/ISSUES_TIMELINE.md` - Issueタイムライン
+- `README.md` - プロジェクト概要 / 主要機能
+- `VISION.md` - プロジェクトのビジョンと目標
+- `CHANGELOG.md` - 変更履歴
+- `docs/DEVELOPMENT.md` - 開発ガイドライン
+- `docs/ARCHITECTURE.md` - システムアーキテクチャ
+- `docs/PROJECT_STRUCTURE.md` - プロジェクト構造
+- `docs/GIT_WORKFLOW.md` - Gitワークフロー
+- `docs/VERSIONING.md` - バージョン管理
+- `docs/PRIVACY_SECURITY.md` - プライバシーとセキュリティ
+- `docs/BROWSER_KNOWLEDGE_INTEGRATION.md` - ブラウザと知識管理の統合
+- `docs/EXTERNAL_INTEGRATIONS.md` - 外部サービス統合
+- `docs/CLI_TOOLS.md` - CLIツールガイド
+- `docs/GITHUB_ISSUES.md` - GitHub Issues管理
+- `docs/CONTRIBUTING.md` - コントリビューションガイド
 
 ---
 
 ## プロジェクト概要
 
-UGC動画のAI分析、クリエイティブのCTR最適化、インフルエンサー管理/マッチング、配信実績の紐付け・レポーティングまでを一体化したプラットフォームです。
+**New Browse** は、メモ帳、LLM、データベースを統合した次世代ブラウザです。視認性の高いダッシュボードとLLMを使った知識整理機能を備えています。
 
-### 主要コンポーネント
+### ビジョン
 
-- `api/`: FastAPIバックエンド（API + Jinja2/htmx UI）
-- `src/video_analysis/`: 分析コア、LLMプロバイダー、パイプライン
-- `dashboard/`: Next.js UI（App Router）
-- `orchestrator/`: Fastify + Redis オーケストレーター（任意）
-- `dashboards/`: Streamlitダッシュボード群（任意/レガシー）
+**「ものを調べる体験を知識を蓄えていく体験へと進化させる」**
+
+Notion + Obsidian + Chrome + NotebookLM を統合した次世代の知識管理ブラウザを目指しています。
+
+### 主要機能
+
+- 📊 **ダッシュボード**: すべての情報を一目で確認できる統合ダッシュボード
+- 🌐 **ブラウザ機能**: タブ管理、ナビゲーション、アドレスバー、ブックマーク・記事保存
+- ✅ **ToDo管理**: 看板方式（カンバン）のToDoボードでタスクを視覚的に管理
+- 📝 **メモ帳機能**: シンプルなメモエディタ、サイドバーでのクイックアクセス
+- 📄 **ブロックエディタ**: Notion風のブロックベースエディタで柔軟なコンテンツ作成
+- 🧠 **知識整理**: LLMのパワーを使って読んだもの・見たもの・感じたことを整理・可視化
+- 🤖 **LLM統合**: AIアシスタントとのチャット機能（クラウドAPI、オプション）
+- 💾 **データベース統合**: SQLiteによるメモ、ブックマーク、履歴、ToDo、記事、知識エントリー、ページの永続化
+
+### 設計原則
+
+- **シンプルさ優先**: 無駄な機能は削ぎ落とし、メンテナンス性を重視
+- **YAGNI原則**: 必要になるまで実装しない
+- **最小限の依存関係**: 必要な依存関係のみを使用
+- **プライバシー第一**: 完全ローカル動作、外部通信なし（オプション機能を除く）
 
 ### 主要技術スタック
 
-- **バックエンド**: Python 3.12+（3.13+対応）, FastAPI, SQLAlchemy, Jinja2, htmx
-- **AI/分析**: Google Gemini (gemini-2.5-flash), OpenAI GPT-4 Vision, Whisper, MediaPipe, YOLO
-- **DB**: SQLite（開発）, Supabase/PostgreSQL（本番）
-- **フロントエンド**: Next.js 15, TypeScript, Tailwind CSS
-- **オーケストレーション**: Fastify (TS), Redis（任意）
-- **外部連携**: Apify（TikTok/サイトスクレイピング）
+- **フロントエンド**: React 18 + TypeScript + Vite
+- **バックエンド**: Tauri (Rust)
+- **データベース**: SQLite (rusqlite) - 完全ローカル
+- **UI**: カスタムCSS（ダークテーマ）
+- **テスト**: Vitest + React Testing Library
 
 ### ディレクトリ構造（主要）
 
 ```
-video-analysis/
-├── api/                    # FastAPI アプリ（routes/services/templates/static）
-├── auth/                   # 認証/認可
-├── config/                 # 設定/環境変数
-├── database/               # DBモデル/マネージャ
-├── src/video_analysis/     # 分析コア/LLM/パイプライン
-├── dashboard/              # Next.js ダッシュボード
-├── orchestrator/           # TSオーケストレーター（任意）
-├── dashboards/             # Streamlit（任意/レガシー）
-├── scripts/                # バッチ/運用スクリプト
+new-browse/
+├── src/                    # フロントエンド（React + TypeScript）
+│   ├── components/         # Reactコンポーネント
+│   ├── services/           # ビジネスロジック・API
+│   ├── hooks/              # カスタムフック
+│   ├── types/              # TypeScript型定義
+│   ├── utils/              # ユーティリティ関数
+│   ├── constants/          # 定数
+│   └── test/               # テストヘルパー
+├── src-tauri/              # バックエンド（Rust）
+│   ├── src/                # Rustソースコード
+│   ├── Cargo.toml          # Rust依存関係
+│   └── tauri.conf.json     # Tauri設定
 ├── docs/                   # ドキュメント
-└── uploads/ thumbnails/ exports/ logs/  # 生成物
+├── scripts/                # PowerShellスクリプト
+├── .github/                # GitHub設定（Issue/PRテンプレート）
+└── tests/                  # テストファイル
 ```
 
 ---
 
 ## 開発環境のヒント
 
-### APIサーバー（FastAPI）
+### セットアップ
 
 ```bash
-python -m uvicorn api.main:app --reload --host 0.0.0.0 --port 8000
+# 初回セットアップ（依存関係インストール、環境確認）
+npm run setup
+
+# 環境チェック
+npm run check
 ```
 
-### Jinja2/htmx UI
-
-- APIサーバー起動後、`http://localhost:8000/` にアクセス
-- テンプレート: `api/templates/`
-
-### Next.jsダッシュボード
+### 開発サーバー
 
 ```bash
-cd dashboard
-npm install
+# Tauri開発モード（推奨）
+npm run tauri:dev
+
+# Vite開発モード（フロントエンドのみ）
 npm run dev
-```
-
-### オーケストレーター（任意）
-
-```bash
-cd orchestrator
-npm install
-npm run dev
-```
-
-### Streamlitダッシュボード（任意）
-
-```bash
-python main.py dashboard
-```
-
-### バッチ分析/紐付け
-
-```bash
-python analyze_and_store.py /path/to/videos
-python scripts/batch_analyze_and_link.py
-```
-
-### MCP設定（任意）
-
-- 設定例: `.cursor/mcp.json.example`
-- セットアップ: `scripts/setup_mcp.sh` / `scripts/setup_mcp.ps1`
-
-### Windows一括起動
-
-```powershell
-.\start_all_servers.bat
-.\stop_all_servers.bat
-```
-
-### agent-browser（ブラウザ自動化）
-
-このプロジェクトには `agent-browser` が統合されています。AIエージェントがブラウザ操作を自動化する際に使用できます。
-
-#### インストール
-
-```bash
-cd video-analysis
-npm install
-agent-browser install  # Chromiumをダウンロード
-```
-
-#### 基本的な使用方法
-
-```bash
-# URLを開く
-agent-browser open http://localhost:8000
-
-# スナップショットを取得（AIエージェント推奨）
-agent-browser snapshot -i --json  # インタラクティブ要素のみ、JSON形式
-
-# 要素をクリック（refを使用）
-agent-browser click @e2
-
-# フォームに入力
-agent-browser fill @e3 "test@example.com"
-
-# テキストを取得
-agent-browser get text @e1
-
-# スクリーンショット
-agent-browser screenshot page.png
-
-# ブラウザを閉じる
-agent-browser close
-```
-
-#### AIエージェント向け推奨ワークフロー
-
-1. **ページを開いてスナップショット取得**
-   ```bash
-   agent-browser open <url>
-   agent-browser snapshot -i --json
-   ```
-
-2. **スナップショットからrefを特定**
-   - スナップショットには各要素に `@e1`, `@e2` などのrefが付与されます
-   - AIエージェントはこのrefを使用して要素を操作します
-
-3. **refを使用して操作**
-   ```bash
-   agent-browser click @e2
-   agent-browser fill @e3 "input text"
-   ```
-
-4. **ページ変更後は再スナップショット**
-   ```bash
-   agent-browser snapshot -i --json
-   ```
-
-#### セッション管理
-
-複数のブラウザインスタンスを同時に管理できます：
-
-```bash
-# セッションを指定
-agent-browser --session agent1 open site-a.com
-agent-browser --session agent2 open site-b.com
-
-# セッション一覧
-agent-browser session list
-```
-
-#### 詳細なコマンド
-
-すべてのコマンドは `agent-browser --help` で確認できます。主要なコマンド：
-
-- **ナビゲーション**: `open`, `back`, `forward`, `reload`
-- **操作**: `click`, `fill`, `type`, `hover`, `scroll`
-- **情報取得**: `get text`, `get html`, `get url`, `get title`
-- **待機**: `wait <selector>`, `wait <ms>`
-- **デバッグ**: `screenshot`, `console`, `errors`
-
-詳細は [agent-browser README](https://github.com/vercel-labs/agent-browser) を参照してください。
-
-### Vibium（ブラウザ自動化 - MCP統合）
-
-このプロジェクトには `vibium` も統合されています。VibiumはMCPサーバー内蔵で、Claude Codeから直接使用できます。WebDriver BiDiベースで軽量（約10MB）です。
-
-#### インストール
-
-```bash
-# JavaScript/TypeScript
-cd video-analysis
-npm install
-
-# Python
-pip install -r requirements.txt
-```
-
-Vibiumは自動的にChrome for Testingをダウンロードします（初回インストール時）。
-
-#### MCP設定（Claude Code用）
-
-MCP設定ファイル（`~/.cursor/mcp.json`）に自動的に追加されます：
-
-```json
-{
-  "mcpServers": {
-    "vibium": {
-      "command": "npx",
-      "args": ["-y", "vibium"]
-    }
-  }
-}
-```
-
-設定スクリプトを実行：
-```bash
-./scripts/setup_mcp.sh
-```
-
-#### JavaScript/TypeScriptでの使用
-
-**同期API:**
-```javascript
-const { browserSync } = require('vibium')
-
-const vibe = browserSync.launch()
-vibe.go('https://example.com')
-
-const png = vibe.screenshot()
-require('fs').writeFileSync('screenshot.png', png)
-
-const link = vibe.find('a')
-link.click()
-vibe.quit()
-```
-
-**非同期API:**
-```javascript
-import { browser } from 'vibium'
-
-const vibe = await browser.launch()
-await vibe.go('https://example.com')
-
-const png = await vibe.screenshot()
-await fs.writeFile('screenshot.png', png)
-
-const link = await vibe.find('a')
-await link.click()
-await vibe.quit()
-```
-
-#### Pythonでの使用
-
-**同期API:**
-```python
-from vibium import browser_sync as browser
-
-vibe = browser.launch()
-vibe.go("https://example.com")
-
-png = vibe.screenshot()
-with open("screenshot.png", "wb") as f:
-    f.write(png)
-
-link = vibe.find("a")
-link.click()
-vibe.quit()
-```
-
-**非同期API:**
-```python
-import asyncio
-from vibium import browser
-
-async def main():
-    vibe = await browser.launch()
-    await vibe.go("https://example.com")
-    
-    png = await vibe.screenshot()
-    with open("screenshot.png", "wb") as f:
-        f.write(png)
-    
-    link = await vibe.find("a")
-    await link.click()
-    await vibe.quit()
-
-asyncio.run(main())
-```
-
-#### Claude Codeでの使用
-
-MCP設定後、Claude Codeから直接使用できます：
-
-```
-「example.comにアクセスして最初のリンクをクリックして」
-```
-
-利用可能なMCPツール：
-- `browser_launch` - ブラウザを起動（デフォルトで表示）
-- `browser_navigate` - URLに移動
-- `browser_find` - CSSセレクタで要素を検索
-- `browser_click` - 要素をクリック
-- `browser_type` - 要素にテキストを入力
-- `browser_screenshot` - ビューポートをキャプチャ（base64またはファイル保存）
-- `browser_quit` - ブラウザを閉じる
-
-#### Vibiumの特徴
-
-- **AI-native**: MCPサーバー内蔵、Claude Codeで即座に使用可能
-- **ゼロ設定**: インストール時に自動でブラウザをダウンロード
-- **標準準拠**: WebDriver BiDiベース（企業の独自プロトコルではない）
-- **軽量**: 約10MBの単一バイナリ、ランタイム依存なし
-- **自動待機**: 要素が表示されるまで自動的に待機
-
-詳細は [Vibium README](https://github.com/VibiumDev/vibium) を参照してください。
-
----
-
-## 主要ファイル/モジュール
-
-- `api/main.py` - FastAPIアプリ（ルーター統合）
-- `api/routes/*.py` - 機能別API（video/analytics/influencer/scraping/import/creative/export/health/web）
-- `api/services/*.py` - サービス層
-- `api/templates/` - Jinja2/htmx UI
-- `database/manager.py` - SQLAlchemyモデル & DB操作
-- `database/connection.py` - DB接続管理
-- `auth/fastapi_routes.py` - 認証API
-- `src/video_analysis/analysis/llm/providers.py` - LLMプロバイダー
-- `src/video_analysis/analysis/llm/prompts.py` - 分析プロンプト
-- `config/settings.py` - 環境変数と設定
-- `scripts/` - バッチ分析、環境検証、DBメンテナンス
-
----
-
-## ビルドとテスト
-
-### Python依存関係
-
-```bash
-pip install -r requirements.txt
-pip install -r requirements-dev.txt
 ```
 
 ### テスト
 
 ```bash
-pytest tests/ -v
-pytest -m integration tests/ -v
+# テスト実行
+npm run test
+
+# ウォッチモード
+npm run test:watch
+
+# カバレッジ
+npm run test:coverage
+
+# UIモード
+npm run test:ui
+
+# CI用（ウォッチなし）
+npm run test:ci
 ```
 
-### Next.js
+### ビルド
 
 ```bash
-cd dashboard
+# フロントエンドビルド
+npm run build
+
+# Tauriアプリビルド
+npm run tauri:build
+```
+
+### リント・クリーンアップ
+
+```bash
+# リント実行
 npm run lint
-npm run build
+
+# クリーンアップ（node_modules、dist、target削除）
+npm run clean
 ```
 
-### Orchestrator（任意）
+### GitHub管理
 
 ```bash
-cd orchestrator
-npm run build
+# GitHub CLIツール
+npm run github
+
+# 使用例
+npm run github issues-create    # Issue作成
+npm run github issues-list      # Issue一覧
+npm run github pr-create        # PR作成
+npm run github release-create   # リリース作成
 ```
+
+詳細は `docs/CLI_TOOLS.md` と `docs/GITHUB_ISSUES.md` を参照してください。
+
+---
+
+## 主要ファイル/モジュール
+
+### フロントエンド（React + TypeScript）
+
+- `src/App.tsx` - メインアプリケーションコンポーネント
+- `src/main.tsx` - エントリーポイント
+- `src/components/` - UIコンポーネント
+- `src/services/` - ビジネスロジック（データベース、LLM、ブラウザ）
+- `src/hooks/` - カスタムReactフック
+- `src/types/` - TypeScript型定義
+- `src/utils/` - ユーティリティ関数
+
+### バックエンド（Rust + Tauri）
+
+- `src-tauri/src/main.rs` - Tauriメインエントリーポイント
+- `src-tauri/src/commands.rs` - Tauriコマンド（フロントエンド↔バックエンド通信）
+- `src-tauri/src/database.rs` - SQLiteデータベース操作
+- `src-tauri/Cargo.toml` - Rust依存関係
+- `src-tauri/tauri.conf.json` - Tauri設定
+
+### 設定ファイル
+
+- `vite.config.ts` - Vite設定
+- `vitest.config.ts` - Vitest設定
+- `tsconfig.json` - TypeScript設定
+- `package.json` - npm依存関係とスクリプト
 
 ---
 
 ## コーディングスタイル
 
-### Python
+### TypeScript/React
 
-- Black / isort / mypy を使用（`requirements-dev.txt`）
-- 型ヒントとdocstringを付与
-- 命名: `snake_case` / `PascalCase` / `UPPER_SNAKE_CASE`
+- **関数コンポーネント**: クラスコンポーネントは使用しない
+- **型安全性**: `any` の使用を避け、明示的な型注釈を優先
+- **命名規則**:
+  - 変数・関数: `camelCase`
+  - コンポーネント・型: `PascalCase`
+  - 定数: `UPPER_SNAKE_CASE`
+  - ファイル: `kebab-case.tsx` または `PascalCase.tsx`（コンポーネント）
+- **フック**: カスタムフックは `use` プレフィックスを使用
+- **イミュータビリティ**: 状態の直接変更を避ける
 
-### TypeScript/Next.js
+### Rust
 
-- 関数コンポーネントのみ
-- 明示的な型注釈を優先
-- 命名: `camelCase` / `PascalCase`
+- **命名規則**:
+  - 変数・関数: `snake_case`
+  - 型・構造体: `PascalCase`
+  - 定数: `UPPER_SNAKE_CASE`
+- **エラーハンドリング**: `Result<T, E>` を使用
+- **所有権**: Rustの所有権システムを理解して使用
 
-### テンプレート（Jinja2/htmx）
+### CSS
 
-- 画面: `api/templates/`
-- 部分更新は `api/templates/partials/` を使用
+- **ダークテーマ**: デフォルトでダークテーマを使用
+- **カスタムプロパティ**: CSS変数を活用
+- **BEM記法**: 推奨（Block__Element--Modifier）
 
 ---
 
-## テスト手順（API）
+## テスト手順
+
+### ユニットテスト
 
 ```bash
-# 動画分析
-curl -X POST "http://localhost:8000/api/analyze?llm_provider=gemini&analysis_mode=ctr_optimized" \
-  -H "Content-Type: multipart/form-data" \
-  -F "file=@test_video.mp4"
+# すべてのテストを実行
+npm run test
 
-# 進捗確認
-curl "http://localhost:8000/api/jobs/{job_id}/progress"
+# 特定のファイルをテスト
+npm run test -- src/components/Dashboard.test.tsx
 
-# 一覧/検索
-curl "http://localhost:8000/api/videos"
-curl "http://localhost:8000/api/search?q=query"
+# ウォッチモード
+npm run test:watch
+```
+
+### カバレッジ
+
+```bash
+# カバレッジレポート生成
+npm run test:coverage
+
+# カバレッジ目標: 80%以上
+```
+
+### E2Eテスト
+
+```bash
+# Tauriアプリを起動してE2Eテスト
+npm run tauri:dev
+# 別ターミナルでテスト実行
+npm run test:e2e
 ```
 
 ---
 
 ## コミット/PR
 
-- コミット規約: `docs/development/COMMIT_POLICY.md`
-- ブランチ運用: `docs/project/GIT_WORKFLOW.md`
-- PRテンプレート: `.github/pull_request_template.md`
+### コミット規約
+
+Conventional Commits形式を使用：
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+**Type**:
+- `feat`: 新機能
+- `fix`: バグ修正
+- `docs`: ドキュメント変更
+- `style`: コードスタイル変更（機能に影響なし）
+- `refactor`: リファクタリング
+- `test`: テスト追加・修正
+- `chore`: ビルド・ツール変更
+
+**例**:
+```
+feat(dashboard): ダッシュボードにToDoウィジェット追加
+
+- ToDoウィジェットコンポーネントを実装
+- ダッシュボードレイアウトに統合
+- テスト追加
+
+Closes #123
+```
+
+### ブランチ戦略
+
+- `main` - 安定版（リリース可能）
+- `develop` - 開発版
+- `feature/*` - 新機能開発
+- `fix/*` - バグ修正
+- `docs/*` - ドキュメント更新
+
+詳細は `docs/GIT_WORKFLOW.md` を参照してください。
 
 ---
 
-## コーディング開始前のTODO確認プロセス
+## GitHub Issues管理
 
-**重要**: コーディングタスクを開始する前に、必ず以下を実行してください。
+### Issue作成
 
-1. `docs/planning/TODO.md` を確認・更新
-2. GitHub Issue（`gh issue list --state open`）を確認
-3. `docs/issues/ISSUES_TIMELINE.md` を更新（着手/完了時）
-4. 既存実装を確認して重複を避ける
+```bash
+# CLIツールでIssue作成
+npm run github issues-create
+
+# または手動でGitHub UIから作成
+# テンプレート: .github/ISSUE_TEMPLATE/
+```
+
+### Issueラベル
+
+- `bug` - バグ報告
+- `feature` - 新機能リクエスト
+- `enhancement` - 既存機能の改善
+- `documentation` - ドキュメント関連
+- `good first issue` - 初心者向け
+- `help wanted` - ヘルプ募集
+- `priority: high/medium/low` - 優先度
+
+詳細は `docs/GITHUB_ISSUES.md` を参照してください。
 
 ---
 
-## イシュー・スケジュール管理（必須）
+## セキュリティとプライバシー
 
-**必須ルール**: Issue管理とスケジュール管理は `docs/issues/ISSUES_TIMELINE.md` を必ず更新して運用すること。
+### プライバシー原則
 
-- 対象ファイル: `docs/issues/ISSUES_TIMELINE.md`
-- Windowsパス: `C:\Users\ogosh\Desktop\eiai\video-analysis\docs\issues\ISSUES_TIMELINE.md`
-- Issue作成・着手・完了で必ず更新
+- **完全ローカル動作**: すべてのデータはローカルのSQLiteデータベースに保存
+- **外部通信なし**: 開発会社やサーバーとの通信は一切行わない（オプション機能を除く）
+- **データ収集なし**: 使用状況、クラッシュレポート、個人情報の収集は一切行わない
 
----
+### 唯一の外部通信
 
-## デプロイ
+- **Webページの表示（iframe）**: ブラウザとしての機能。データは保存されません
+- **LLM API（オプション）**: ユーザーが明示的に設定した場合のみ
+- **Googleカレンダー連携（オプション）**: ユーザーが接続した場合のみ
 
-- 参照: `docs/operations/DEPLOYMENT.md`
-- バックエンド: Railway/Render
-- フロント: Vercel
+### セキュリティチェックリスト
+
+- APIキーは環境変数で管理（`.env`）
+- SQLインジェクション対策（パラメータ化クエリ）
+- XSS対策（React自動エスケープ）
+- CSRF対策（Tauri CSP設定）
+
+詳細は `docs/PRIVACY_SECURITY.md` を参照してください。
 
 ---
 
 ## よくあるタスク
 
-### 新しいAPIエンドポイント追加
+### 新しいコンポーネント追加
 
-1. `api/routes/` にルーター追加
-2. `api/main.py` に `include_router`
-3. 必要に応じて `api/services/` を追加
-4. テスト追加
+1. `src/components/` に新しいコンポーネントファイルを作成
+2. TypeScript型定義を `src/types/` に追加（必要に応じて）
+3. テストファイルを作成（`*.test.tsx`）
+4. `App.tsx` または親コンポーネントにインポート
 
-### 新しいLLMプロバイダー追加
+### 新しいTauriコマンド追加
 
-1. `src/video_analysis/analysis/llm/providers.py` に実装
-2. `src/video_analysis/analysis/llm/prompts.py` に追加
-3. API/UI側の選択肢を更新
+1. `src-tauri/src/commands.rs` に新しいコマンドを実装
+2. `src-tauri/src/main.rs` の `tauri::Builder` にコマンドを登録
+3. フロントエンド側で `invoke()` を使用してコマンドを呼び出し
+4. TypeScript型定義を追加
 
-### スクレイピング拡張
+### データベーススキーマ変更
 
-1. `api/routes/scraping.py` を更新
-2. `api/apify_*` / `api/tiktok_*` を追加
-3. DB保存・UI表示を更新
+1. `src-tauri/src/database.rs` でマイグレーションを実装
+2. 新しいテーブル/カラムを追加
+3. Rust構造体を更新
+4. フロントエンド側の型定義を更新
 
-### データインポート/紐付け
+### 外部サービス統合
 
-1. `api/raw_data_processor.py` / `api/performance_importer.py` を更新
-2. `database/manager.py` を更新
-3. `scripts/batch_analyze_and_link.py` を確認
-
----
-
-## セキュリティ
-
-- APIキーは `.env` で管理（`.env.example` を参照）
-- `config/settings.py` の検証を通すこと
-- 詳細: `docs/security/SECURITY.md`
-
----
-
-## LLMプロバイダー使用例
-
-```python
-from src.video_analysis.analysis.llm.providers import GeminiProvider, OpenAIProvider, AnalysisMode
-
-provider = GeminiProvider(api_key, "gemini-2.5-flash")
-analysis = provider.analyze_frame(frame, analysis_mode=AnalysisMode.CTR_OPTIMIZED)
-
-openai_provider = OpenAIProvider(api_key, "gpt-4-vision-preview")
-analysis = openai_provider.analyze_frame(frame, analysis_mode=AnalysisMode.CTR_OPTIMIZED)
-```
+1. `docs/EXTERNAL_INTEGRATIONS.md` を参照
+2. 必要に応じて認証フローを実装
+3. プライバシーポリシーを更新
+4. ユーザーに明示的な同意を求める
 
 ---
 
@@ -541,65 +472,56 @@ analysis = openai_provider.analyze_frame(frame, analysis_mode=AnalysisMode.CTR_O
 
 **重要**: このセクションは、機能の実装・変更時に必ず更新してください。
 
-**最終更新**: 2026-01-12（Ralph Loop反復実行スクリプト追加）
+**最終更新**: 2026-01-19（リファレンスリソース（everything-claude-code）の活用方法を追加）
 
 ### ✅ 実装済み機能
 
-#### バックエンド (FastAPI)
+#### コア機能
 
-- ルーティング分割: `api/routes/*`（health/video/analytics/influencer/scraping/import/creative/export/web）
-- ジョブ進捗: `/api/jobs/{job_id}/progress`（`api/progress_stream.py`）
-- 監視: `/api/health`, `/api/metrics`, `/api/alerts`
-- 認証/認可: JWT + RBAC（`auth/`）
-- ログ管理: `api/log_routes.py`
-- セキュリティ: レート制限/ヘッダー付与
-- Jinja2/htmx UI: `api/templates/`, `api/static/`
+- プロジェクト構造とセットアップスクリプト
+- Tauri + React + TypeScript基盤
+- Vite開発環境
+- Vitest + React Testing Libraryテスト環境
+- CLIツール（setup、check、lint、clean、github）
+- GitHub Issues管理スクリプト
 
-#### 動画分析/AI
+#### ドキュメント
 
-- LLMフレーム分析（Gemini/OpenAI）
-- CTR最適化プロンプト（`ctr_optimized` 固定）
-- Whisper音声転写（常時有効）
-- OCR/物体検出/音声特徴量
-- Gemini動画直接分析 + 自動圧縮（FFmpeg）
-- サムネイル自動生成
-
-#### データ/パイプライン
-
-- SQLAlchemy管理（`database/`）
-- Rawデータインポート（CSV/JSON/Excel）
-- 配信実績インポート + クリエイティブ紐付け
-- 検索インデックス（`api/search_engine.py`）
-- CSV/JSONエクスポート（`/api/export/*`）
-
-#### スクレイピング/インフルエンサー
-
-- Apify連携（TikTok/サイト）
-- スクレイピングジョブ管理
-- インフルエンサーCRUD
-
-#### フロントエンド
-
-- FastAPIテンプレートUI（htmx）
-- Next.jsダッシュボード（`dashboard/`）
-- Streamlitダッシュボード（`dashboards/`）
-
-#### オーケストレーション（任意）
-
-- TSオーケストレーター（Fastify + Redis）
-- Python Redisワーカー（`api/redis_worker.py`）
-
-#### AI運用/エージェント支援
-
-- 反復実行スクリプト（`scripts/ralph_loop.py`）
+- プロジェクト概要（README.md）
+- ビジョン（VISION.md）
+- 開発ガイドライン（docs/DEVELOPMENT.md）
+- アーキテクチャ設計（docs/ARCHITECTURE.md）
+- プロジェクト構造（docs/PROJECT_STRUCTURE.md）
+- Gitワークフロー（docs/GIT_WORKFLOW.md）
+- バージョン管理（docs/VERSIONING.md）
+- プライバシーとセキュリティ（docs/PRIVACY_SECURITY.md）
+- CLIツールガイド（docs/CLI_TOOLS.md）
+- GitHub Issues管理（docs/GITHUB_ISSUES.md）
+- コントリビューションガイド（docs/CONTRIBUTING.md）
 
 ### 🚧 進行中/今後
 
-- TikTok動画100本バッチ分析と配信データ紐付け（`docs/planning/TODO.md`）
-- NEXI: インフルエンサーマッチング機能（Phase 1〜）
-- UI側のCSV/JSONエクスポート、進捗表示（SSE/WS）
-- テストカバレッジ拡充（API/分析/スクレイピング）
-- 新規LLMプロバイダー（Anthropic Claude）
+#### Phase 1: 基本機能
+
+- [ ] ダッシュボードUI実装
+- [ ] ブラウザ機能（タブ管理、ナビゲーション）
+- [ ] SQLiteデータベース統合
+- [ ] メモ帳機能
+- [ ] ブックマーク機能
+
+#### Phase 2: 高度な機能
+
+- [ ] ToDo管理（カンバンボード）
+- [ ] ブロックエディタ（Notion風）
+- [ ] LLM統合（チャット機能）
+- [ ] 知識整理機能
+
+#### Phase 3: 統合と最適化
+
+- [ ] Googleカレンダー連携
+- [ ] パフォーマンス最適化
+- [ ] E2Eテスト
+- [ ] リリースビルド
 
 ### 📝 更新ルール
 

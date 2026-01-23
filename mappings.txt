@@ -5,3 +5,6 @@ codex/config.toml:~/.codex/config.toml
 codex/rules:~/.codex/rules
 codex/skills/agent-dotfiles:~/.codex/skills/agent-dotfiles
 codex/skills/ralph-loop:~/.codex/skills/ralph-loop
+claudecode/agents:~/.claude/agents
+claudecode/commands:~/.claude/commands
+claudecode/skills:~/.claude/skills
