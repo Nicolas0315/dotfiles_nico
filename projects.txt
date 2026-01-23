@@ -1,9 +1,21 @@
 # One project path per line.
 # Lines starting with # are ignored.
+# Scripts will skip non-existent paths, so you can list both Mac and Windows paths.
 
+# === Windows Paths ===
+
+# Desktop projects
 C:\Users\ogosh\Desktop\eiai\video-analysis
 C:\Users\ogosh\Desktop\dtm-gemini
 C:\Users\ogosh\Desktop\ugc-ai
 C:\Users\ogosh\Desktop\new-browse
 C:\Users\ogosh\Desktop\aituber\airi
 C:\Users\ogosh\Desktop\aituber\airi\packages\model-driver-mediapipe
+
+# Downloads/work projects
+C:\Users\ogosh\Downloads\work\eiai-video-analysis
+
+# === Mac Paths ===
+
+# work directory (Mac)
+/Users/s30519/work/eiai-video-analysis
