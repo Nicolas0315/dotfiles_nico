@@ -1,5 +1,5 @@
-AGENTS.md:~/.codex/AGENTS.md
-AGENTS.md:~/.claude/CLAUDE.md
+CLAUDE.md:~/.claude/CLAUDE.md
+CODEX.md:~/.codex/AGENTS.md
 codex/config.toml:~/.codex/config.toml
 codex/rules:~/.codex/rules
 codex/skills/agent-dotfiles:~/.codex/skills/agent-dotfiles
