@@ -1,6 +1,11 @@
 # Ignore agent caches, logs, auth, and machine-specific artifacts
-/.DS_Store
-/Thumbs.db
+.DS_Store
+Thumbs.db
+.stfolder/
+
+# Syncthing test files
+SYNC_TEST*.md
+SYNC_TEST*.txt
 
 # Codex sensitive or noisy files
 /codex/auth.json
