@@ -148,6 +148,77 @@ source ~/.zshrc
 
 ---
 
+## 🪟 クイックスタート（Windows）
+
+### 1. リポジトリクローン
+
+```powershell
+# PowerShell を管理者権限で起動
+cd $env:USERPROFILE\work
+git clone https://github.com/Nicolas0315/dotfiles_nico.git
+cd dotfiles_nico
+```
+
+### 2. 実行ポリシー確認
+
+```powershell
+# 現在の実行ポリシー確認
+Get-ExecutionPolicy
+
+# RemoteSigned または Unrestricted に変更（必要に応じて）
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+```
+
+### 3. シンボリックリンク作成
+
+```powershell
+# 管理者権限の PowerShell で実行
+powershell -ExecutionPolicy Bypass -File scripts\link_dotfiles.ps1 `
+  -DotfilesRoot "$env:USERPROFILE\work\dotfiles_nico" `
+  -MappingFile "$env:USERPROFILE\work\dotfiles_nico\mappings.txt"
+```
+
+これにより以下のリンクが作成されます：
+- `C:\Users\<user>\.claude\CLAUDE.md` → `dotfiles_nico\CLAUDE.md`
+- `C:\Users\<user>\.claude\agents` → `dotfiles_nico\claudecode\agents`
+- `C:\Users\<user>\.claude\commands` → `dotfiles_nico\claudecode\commands`
+- `C:\Users\<user>\.claude\rules` → `dotfiles_nico\claudecode\rules`
+- `C:\Users\<user>\.claude\hooks` → `dotfiles_nico\claudecode\hooks`
+- `C:\Users\<user>\.codex\AGENTS.md` → `dotfiles_nico\CODEX.md`
+
+**注意**: Windows ではシンボリックリンクに管理者権限が必要です。権限がない場合、スクリプトは自動的にハードリンクまたはジャンクションにフォールバックします。
+
+### 4. プロジェクトリスト更新（オプション）
+
+```powershell
+# projects.txt を編集して Windows パスを有効化
+notepad projects.txt
+
+# 例: コメントを外す
+# C:\Users\ogosh\Desktop\my-project  # ← コメントアウト解除
+
+# AGENTS.md をプロジェクトに同期
+powershell -ExecutionPolicy Bypass -File scripts\sync_projects.ps1 `
+  -DotfilesRoot "$env:USERPROFILE\work\dotfiles_nico" `
+  -ProjectsFile "$env:USERPROFILE\work\dotfiles_nico\projects.txt"
+```
+
+### 5. ターミナル設定
+
+Windows では tmux が使えないため、代わりに Windows Terminal を使用：
+
+```powershell
+# 環境変数設定（PowerShell プロファイルに追加）
+notepad $PROFILE
+
+# 以下を追加：
+$env:HANDOFF_LAUNCH_METHOD = "terminal-tab"
+```
+
+Windows Terminal で `/handoff` を実行すると、新しいタブで Codex が起動します。
+
+---
+
 ## 💡 基本的な使い方
 
 ### ワークフロー: 機能実装からレビューまで
@@ -422,6 +493,50 @@ tmux new -s dev
 export HANDOFF_LAUNCH_METHOD=terminal-tab
 ```
 
+### Windows 特有の問題
+
+#### 管理者権限エラー
+
+```powershell
+# PowerShell を右クリック → "管理者として実行"
+# その後、再度リンクスクリプトを実行
+```
+
+#### 実行ポリシーエラー
+
+```powershell
+# エラー: このシステムではスクリプトの実行が無効になっています
+
+# 解決方法:
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# または一時的にバイパス:
+powershell -ExecutionPolicy Bypass -File scripts\link_dotfiles.ps1 ...
+```
+
+#### シンボリックリンクが作成できない
+
+```powershell
+# スクリプトは自動的にハードリンクまたはジャンクションにフォールバック
+# 確認:
+Get-Item $env:USERPROFILE\.claude\CLAUDE.md | Select-Object LinkType
+
+# LinkType が表示されれば成功
+```
+
+#### Windows Terminal でタブが開かない
+
+```powershell
+# Windows Terminal がインストールされているか確認
+winget list --name "Windows Terminal"
+
+# インストール:
+winget install --id Microsoft.WindowsTerminal -e
+
+# 環境変数設定:
+$env:HANDOFF_LAUNCH_METHOD = "terminal-tab"
+```
+
 ---
 
 ## 📖 詳細ドキュメント
@@ -456,6 +571,8 @@ git push origin main
 
 ### 新しいマシンでセットアップ
 
+**Mac/Linux:**
+
 ```bash
 # 1. リポジトリクローン
 git clone https://github.com/Nicolas0315/dotfiles_nico.git
@@ -467,6 +584,30 @@ cd dotfiles_nico
 # 3. tmux 設定
 echo 'export HANDOFF_LAUNCH_METHOD=tmux' >> ~/.zshrc
 source ~/.zshrc
+
+# 完了！
+```
+
+**Windows:**
+
+```powershell
+# 1. PowerShell を管理者権限で起動
+# 2. リポジトリクローン
+cd $env:USERPROFILE\work
+git clone https://github.com/Nicolas0315/dotfiles_nico.git
+cd dotfiles_nico
+
+# 3. 実行ポリシー設定
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+# 4. シンボリックリンク作成
+powershell -ExecutionPolicy Bypass -File scripts\link_dotfiles.ps1 `
+  -DotfilesRoot "$PWD" `
+  -MappingFile "$PWD\mappings.txt"
+
+# 5. 環境変数設定
+notepad $PROFILE
+# 以下を追加: $env:HANDOFF_LAUNCH_METHOD = "terminal-tab"
 
 # 完了！
 ```
