@@ -545,6 +545,8 @@ $env:HANDOFF_LAUNCH_METHOD = "terminal-tab"
 - `CLAUDE.md` - Claude Code 専用設定（実装担当）
 - `CODEX.md` - Codex 専用設定（レビュー・管理担当）
 - `docs/HANDOFF_WORKFLOW.md` - /handoff コマンド詳細ガイド
+- `docs/WINDOWS_SETUP.md` - Windows セットアップガイド
+- `docs/SYNCTHING_SETUP.md` - Syncthing で P2P 同期
 - `claudecode/commands/handoff.md` - /handoff コマンド仕様
 - `codex/skills/auto-review/review-handoff.md` - 自動レビュー詳細
 
@@ -611,6 +613,61 @@ notepad $PROFILE
 
 # 完了！
 ```
+
+---
+
+## 🔄 Syncthing で P2P 同期（推奨）
+
+複数デバイス間で dotfiles をリアルタイム同期したい場合、**Syncthing** の使用を推奨します。
+
+### Syncthing とは
+
+- **P2P ファイル同期**: クラウドを介さず、デバイス間で直接同期
+- **プライバシー重視**: データは自分のデバイス間でのみ移動
+- **暗号化通信**: すべての通信が TLS で暗号化
+- **無料・オープンソース**: 完全に無料で容量制限なし
+
+### クイックセットアップ
+
+#### 1. インストール
+
+**Mac:**
+```bash
+brew install syncthing
+brew services start syncthing
+```
+
+**Windows:**
+[公式サイト](https://syncthing.net/downloads/)からインストーラーをダウンロード
+
+#### 2. デバイス接続
+
+1. 両方のデバイスで Syncthing を起動
+2. Web UI を開く: `http://127.0.0.1:8384`
+3. デバイス ID を交換して接続
+
+#### 3. dotfiles_nico を共有
+
+1. "Add Folder" で dotfiles_nico ディレクトリを追加
+2. 接続したデバイスと共有
+3. `.stignore` で `.git` ディレクトリを除外（重要）
+
+### Git との併用
+
+- **Syncthing**: リアルタイム同期（日常的な編集）
+- **Git**: バージョン管理・バックアップ（重要な変更時）
+
+```
+Mac ←─ Syncthing ─→ Windows
+ │                      │
+ └──── Git (GitHub) ────┘
+```
+
+### 詳細ガイド
+
+完全なセットアップ手順、トラブルシューティング、ベストプラクティスは：
+
+📘 **[docs/SYNCTHING_SETUP.md](docs/SYNCTHING_SETUP.md)**
 
 ---
 

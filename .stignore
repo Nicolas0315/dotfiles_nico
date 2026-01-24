@@ -1,0 +1,78 @@
+# Syncthing Ignore Patterns for dotfiles_nico
+# このファイルは Syncthing で同期から除外するファイルを指定します
+
+# Git 管理ファイル（Git で管理するため Syncthing では除外）
+.git
+.gitignore
+.gitattributes
+
+# macOS システムファイル
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+
+# Windows システムファイル
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# エディタ一時ファイル
+*.swp
+*.swo
+*~
+.*.sw?
+.vscode/
+.idea/
+
+# ログファイル
+*.log
+
+# バックアップファイル
+*.bak
+*.backup
+*~
+
+# 競合ファイル
+*.sync-conflict-*
+
+# Claude/Codex キャッシュとセッションデータ（同期不要）
+.claude/cache/
+.claude/history.jsonl
+.claude/debug/
+.claude/file-history/
+.claude/paste-cache/
+.claude/plans/
+.claude/session-env/
+.claude/shell-snapshots/
+.claude/statsig/
+.claude/tasks/
+.claude/todos/
+.codex/cache/
+.codex/history.jsonl
+.codex/log/
+.codex/sessions/
+.codex/tmp/
+
+# 一時ファイル
+tmp/
+temp/
+*.tmp
+
+# Node modules（もしあれば）
+node_modules/
+
+# ビルド成果物
+dist/
+build/
+out/
