@@ -4,8 +4,12 @@ codex/config.toml:~/.codex/config.toml
 codex/rules:~/.codex/rules
 codex/skills/agent-dotfiles:~/.codex/skills/agent-dotfiles
 codex/skills/ralph-loop:~/.codex/skills/ralph-loop
+claudecode/settings.json:~/.claude/settings.json
 claudecode/agents:~/.claude/agents
 claudecode/commands:~/.claude/commands
 claudecode/skills:~/.claude/skills
 claudecode/rules:~/.claude/rules
 claudecode/hooks:~/.claude/hooks
+.clawdbot:~/.clawdbot
+scripts/discord-notify.sh:~/.claude/scripts/discord-notify.sh
+scripts/discord-notify.ps1:~/.claude/scripts/discord-notify.ps1

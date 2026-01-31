@@ -79,14 +79,54 @@
     ],
     "PostToolUse": [
       {
+        "matcher": "tool == \"Bash\" && tool_input.command matches \"git commit\"",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const{execSync}=require('child_process');let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);const cmd=i.tool_input?.command||'';if(/git commit/.test(cmd)&&i.tool_output?.exit_code===0){try{const msg=execSync('git log -1 --pretty=%s',{encoding:'utf8'}).trim();const script=process.platform==='win32'?'powershell -File $env:USERPROFILE\\\\.claude\\\\scripts\\\\discord-notify.ps1 commit \\\"'+msg+'\\\"':'bash $HOME/.claude/scripts/discord-notify.sh commit \\\"'+msg+'\\\"';execSync(script,{stdio:'inherit'})}catch(e){}}console.log(d)})\""
+          }
+        ],
+        "description": "Send Discord notification after successful commit"
+      },
+      {
+        "matcher": "tool == \"Bash\" && tool_input.command matches \"gh pr create\"",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const{execSync}=require('child_process');let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);const cmd=i.tool_input?.command||'';if(/gh pr create/.test(cmd)){const out=i.tool_output?.output||'';const m=out.match(/https:\\/\\/github.com\\/[^/]+\\/[^/]+\\/pull\\/\\d+/);if(m){console.error('[Hook] PR created: '+m[0]);const repo=m[0].replace(/https:\\/\\/github.com\\/([^/]+\\/[^/]+)\\/pull\\/\\d+/,'$1');const pr=m[0].replace(/.*\\/pull\\/(\\d+)/,'$1');console.error('[Hook] To review: gh pr review '+pr+' --repo '+repo);try{const script=process.platform==='win32'?'powershell -File $env:USERPROFILE\\\\.claude\\\\scripts\\\\discord-notify.ps1 pr \\\"'+m[0]+'\\\"':'bash $HOME/.claude/scripts/discord-notify.sh pr \\\"'+m[0]+'\\\"';execSync(script,{stdio:'inherit'})}catch(e){}}}console.log(d)})\""
+          }
+        ],
+        "description": "Log PR URL, provide review command, and send Discord notification"
+      },
+      {
+        "matcher": "tool == \"Bash\" && tool_input.command matches \"(npm|pnpm|yarn|bun) run build\"",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const{execSync}=require('child_process');let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);const cmd=i.tool_input?.command||'';if(/(npm|pnpm|yarn|bun) run build/.test(cmd)){const status=i.tool_output?.exit_code===0?'success':'failure';const msg=status==='success'?'Build completed successfully':'Build failed';try{const script=process.platform==='win32'?'powershell -File $env:USERPROFILE\\\\.claude\\\\scripts\\\\discord-notify.ps1 build '+status+' \\\"'+msg+'\\\"':'bash $HOME/.claude/scripts/discord-notify.sh build '+status+' \\\"'+msg+'\\\"';execSync(script,{stdio:'inherit'})}catch(e){}}console.log(d)})\""
+          }
+        ],
+        "description": "Send Discord notification after build completion"
+      },
+      {
+        "matcher": "tool == \"Bash\" && tool_input.command matches \"(npm|pnpm|yarn|bun) (run )?test\"",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node -e \"const{execSync}=require('child_process');let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);const cmd=i.tool_input?.command||'';if(/(npm|pnpm|yarn|bun) (run )?test/.test(cmd)){const status=i.tool_output?.exit_code===0?'success':'failure';const out=i.tool_output?.output||'';const passedMatch=out.match(/(\\d+) passed/);const failedMatch=out.match(/(\\d+) failed/);const coverageMatch=out.match(/(\\d+(\\.\\d+)?)%/);const passed=passedMatch?passedMatch[1]:'0';const failed=failedMatch?failedMatch[1]:'0';const coverage=coverageMatch?coverageMatch[1]+'%':'N/A';try{const script=process.platform==='win32'?'powershell -File $env:USERPROFILE\\\\.claude\\\\scripts\\\\discord-notify.ps1 test '+status+' '+passed+' '+failed+' '+coverage:'bash $HOME/.claude/scripts/discord-notify.sh test '+status+' '+passed+' '+failed+' '+coverage;execSync(script,{stdio:'inherit'})}catch(e){}}console.log(d)})\""
+          }
+        ],
+        "description": "Send Discord notification after test completion"
+      },
+      {
         "matcher": "tool == \"Bash\"",
         "hooks": [
           {
             "type": "command",
-            "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{const i=JSON.parse(d);const cmd=i.tool_input?.command||'';if(/gh pr create/.test(cmd)){const out=i.tool_output?.output||'';const m=out.match(/https:\\/\\/github.com\\/[^/]+\\/[^/]+\\/pull\\/\\d+/);if(m){console.error('[Hook] PR created: '+m[0]);const repo=m[0].replace(/https:\\/\\/github.com\\/([^/]+\\/[^/]+)\\/pull\\/\\d+/,'$1');const pr=m[0].replace(/.*\\/pull\\/(\\d+)/,'$1');console.error('[Hook] To review: gh pr review '+pr+' --repo '+repo)}}console.log(d)})\""
+            "command": "node -e \"let d='';process.stdin.on('data',c=>d+=c);process.stdin.on('end',()=>{console.log(d)})\""
           }
         ],
-        "description": "Log PR URL and provide review command after PR creation"
+        "description": "Passthrough for other Bash commands"
       },
       {
         "matcher": "tool == \"Edit\" && tool_input.file_path matches \"\\\\.(ts|tsx|js|jsx)$\"",

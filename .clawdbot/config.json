@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json.schemastore.org/clawdbot-config.json",
+  "discord": {
+    "webhookUrl": "",
+    "enabled": false,
+    "notifications": {
+      "commit": true,
+      "pr": true,
+      "build": true,
+      "test": true
+    },
+    "username": "Claude Dev Bot",
+    "avatarUrl": "https://avatars.githubusercontent.com/u/0?v=4"
+  },
+  "notifications": {
+    "format": "embed",
+    "includeContext": true,
+    "mentionOnFailure": false
+  }
+}

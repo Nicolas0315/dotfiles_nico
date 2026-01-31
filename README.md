@@ -29,12 +29,15 @@ dotfiles_nico/
 ├── mappings.txt                       # シンボリックリンクマッピング
 ├── projects.txt                       # プロジェクトリスト
 │
+├── .clawdbot/                         # Clawdbot / Discord 通知設定
+│   └── config.json                    # Discord Webhook URL、通知設定
+│
 ├── claudecode/                        # Claude Code 専用リソース
 │   ├── agents/                        # 9 エージェント（planner, tdd-guide, etc.）
-│   ├── commands/                      # 15 コマンド（/plan, /tdd, /handoff, etc.）
+│   ├── commands/                      # 16 コマンド（/plan, /tdd, /discord-notify, etc.）
 │   ├── skills/                        # スキル定義
 │   ├── rules/                         # コーディング規約（8ファイル）
-│   ├── hooks/                         # 自動化フック
+│   ├── hooks/                         # 自動化フック（Discord 通知含む）
 │   └── examples/                      # 設定例
 │
 ├── codex/                             # Codex 専用リソース
@@ -49,7 +52,9 @@ dotfiles_nico/
 │   ├── sync_projects.sh               # プロジェクト同期（Mac/Linux）
 │   ├── sync_projects.ps1              # プロジェクト同期（Windows）
 │   ├── handoff-to-codex.sh            # Codex 自動起動スクリプト
-│   └── review-handoff-wrapper.sh      # レビューラッパー
+│   ├── review-handoff-wrapper.sh      # レビューラッパー
+│   ├── discord-notify.sh              # Discord 通知スクリプト（Mac/Linux）
+│   └── discord-notify.ps1             # Discord 通知スクリプト（Windows）
 │
 └── docs/                              # ドキュメント
     └── HANDOFF_WORKFLOW.md            # ハンドオフワークフロー詳細
@@ -373,6 +378,61 @@ Claude Code と Codex は以下のルールを自動的に適用：
 
 ---
 
+### 5. Discord 通知連携（Clawdbot 統合）
+
+開発作業を Discord に自動通知：
+
+**自動通知イベント**:
+- **Git Commit**: コミット成功時に自動通知
+- **PR 作成**: Pull Request 作成時に自動通知
+- **ビルド完了**: ビルド成功/失敗を自動通知
+- **テスト完了**: テスト結果とカバレッジを自動通知
+
+**セットアップ**:
+
+1. Discord Webhook を作成：
+   - Discord サーバ設定 → Integrations → Webhooks → New Webhook
+   - Webhook URL をコピー
+
+2. 設定ファイルを編集：
+   ```bash
+   vim ~/.clawdbot/config.json
+   ```
+
+   ```json
+   {
+     "discord": {
+       "webhookUrl": "https://discord.com/api/webhooks/YOUR_WEBHOOK",
+       "enabled": true,
+       "notifications": {
+         "commit": true,
+         "pr": true,
+         "build": true,
+         "test": true
+       }
+     }
+   }
+   ```
+
+3. 手動通知も可能：
+   ```bash
+   # コミット通知
+   /discord-notify commit "feat: add new feature"
+
+   # PR 通知
+   /discord-notify pr "https://github.com/user/repo/pull/123"
+
+   # ビルド通知
+   /discord-notify build success "Build completed"
+
+   # テスト通知
+   /discord-notify test success 42 0 87%
+   ```
+
+詳細: `claudecode/commands/discord-notify.md`
+
+---
+
 ## 📚 主要コマンド一覧
 
 ### Claude Code（実装）
@@ -383,6 +443,7 @@ Claude Code と Codex は以下のルールを自動的に適用：
 /build-fix         # ビルドエラー解決
 /checkpoint        # 作業状態保存
 /handoff           # Codex に自動引き継ぎ（★重要）
+/discord-notify    # Discord に開発通知を送信
 ```
 
 ### Codex（レビュー・管理）
